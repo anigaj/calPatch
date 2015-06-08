@@ -1,0 +1,8 @@
+{
+    "name": "Upcoming events in calendar cover",
+    "description": "Shows events for the next seven days in the calender cover",
+    "category": "calendar",
+	"infos": {
+        "maintainer": "Anant Gajjar"
+	}
+}
