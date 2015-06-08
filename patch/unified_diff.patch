@@ -1,6 +1,6 @@
 diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/share/jolla-calendar/cover/CalendarCover.qml
---- original/usr/share/jolla-calendar/cover/CalendarCover.qml	2015-05-31 12:35:19.868417977 +0100
-+++ patch/usr/share/jolla-calendar/cover/CalendarCover.qml	2015-05-31 12:37:11.227245981 +0100
+--- original/usr/share/jolla-calendar/cover/CalendarCover.qml	2015-06-08 07:29:53.000000000 +0100
++++ patch/usr/share/jolla-calendar/cover/CalendarCover.qml	2015-06-08 07:46:53.000000000 +0100
 @@ -4,6 +4,7 @@ import org.nemomobile.time 1.0
  import org.nemomobile.calendar 1.0
  
@@ -17,7 +17,7 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
          CoverAction {
              iconSource: "image://theme/icon-cover-new"
              onTriggered: {
-@@ -29,6 +31,28 @@ CoverBackground {
+@@ -29,9 +31,31 @@ CoverBackground {
              }
          }
      }
@@ -45,7 +45,11 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
 +
      Column {
          x: Theme.paddingLarge
-         spacing: Theme.paddingSmall
+-        spacing: Theme.paddingSmall
++        spacing: Theme.paddingExtraSmall
+         width: parent.width - 2*Theme.paddingLarge
+         DateLabel {
+             id: dateLabel
 @@ -82,6 +106,7 @@ CoverBackground {
                          if (event.allDay || now < occurrence.endTime) {
                              activeAndComing.append({ displayLabel: event.displayLabel, allDay: event.allDay,
@@ -67,7 +71,7 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
                  width: parent.width
                  height: 2*itemHeight + 2*spacing
 -                spacing: Theme.paddingLarge
-+                spacing: Theme.paddingMedium
++                spacing: Theme.paddingExtraSmall
                  visible: count > 0
  
                  delegate: CoverEventItem {
@@ -81,8 +85,8 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
                      Component.onCompleted: eventList.itemHeight = height
                  }
 diff -rupN original/usr/share/jolla-calendar/cover/CoverEventItem.qml patch/usr/share/jolla-calendar/cover/CoverEventItem.qml
---- original/usr/share/jolla-calendar/cover/CoverEventItem.qml	2015-05-31 12:35:19.868417977 +0100
-+++ patch/usr/share/jolla-calendar/cover/CoverEventItem.qml	2015-06-02 07:21:58.947668795 +0100
+--- original/usr/share/jolla-calendar/cover/CoverEventItem.qml	2015-06-08 07:29:53.000000000 +0100
++++ patch/usr/share/jolla-calendar/cover/CoverEventItem.qml	2015-06-08 07:46:53.000000000 +0100
 @@ -1,7 +1,6 @@
  import QtQuick 2.0
  import Sailfish.Silica 1.0
@@ -99,7 +103,7 @@ diff -rupN original/usr/share/jolla-calendar/cover/CoverEventItem.qml patch/usr/
      spacing: Theme.paddingSmall
  
      Rectangle {
-@@ -23,14 +21,47 @@ Row {
+@@ -23,6 +21,39 @@ Row {
      Column {
          id: labelColumn
          spacing: -Theme.paddingSmall
@@ -133,19 +137,9 @@ diff -rupN original/usr/share/jolla-calendar/cover/CoverEventItem.qml patch/usr/
 +
 +          text: fdw(startTime)
 +          opacity: 0.6
-+          font.pixelSize: Theme.fontSizeExtraSmall
++          font.pixelSize: Theme.fontSizeSmall
 +          color: Theme.primaryColor
 +        }
          EventTimeLabel {
              id: timeLabel
              opacity: 0.6
--            font.pixelSize: Theme.fontSizeSmall
-+            font.pixelSize: Theme.fontSizeExtraSmall
-         }
-         Label {
-             id: nameLabel
--            font.pixelSize: Theme.fontSizeSmall
-+            font.pixelSize: Theme.fontSizeExtraSmall
-         }
-     }
- }
