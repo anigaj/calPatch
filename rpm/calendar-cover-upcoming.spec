@@ -37,5 +37,6 @@ fi
 *  Mon Jun 08 2015 Builder <builder@...> 
 0.2
 Increased font size
+Fixed penultimate event repeat issue
 0.1
 - First build.

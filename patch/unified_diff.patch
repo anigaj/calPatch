@@ -1,6 +1,6 @@
 diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/share/jolla-calendar/cover/CalendarCover.qml
 --- original/usr/share/jolla-calendar/cover/CalendarCover.qml	2015-06-08 07:29:53.000000000 +0100
-+++ patch/usr/share/jolla-calendar/cover/CalendarCover.qml	2015-06-08 07:46:53.000000000 +0100
++++ patch/usr/share/jolla-calendar/cover/CalendarCover.qml	2015-06-18 16:23:30.000000000 +0100
 @@ -4,6 +4,7 @@ import org.nemomobile.time 1.0
  import org.nemomobile.calendar 1.0
  
@@ -66,11 +66,13 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
              }
  
              ListView {
-@@ -120,7 +146,7 @@ CoverBackground {
+@@ -119,8 +145,8 @@ CoverBackground {
+                 model: activeAndComing
                  interactive: false
                  width: parent.width
-                 height: 2*itemHeight + 2*spacing
+-                height: 2*itemHeight + 2*spacing
 -                spacing: Theme.paddingLarge
++                height: (count - indexView) == 1 ? itemHeight + spacing : 2*itemHeight + 2*spacing
 +                spacing: Theme.paddingExtraSmall
                  visible: count > 0
  
@@ -86,7 +88,7 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
                  }
 diff -rupN original/usr/share/jolla-calendar/cover/CoverEventItem.qml patch/usr/share/jolla-calendar/cover/CoverEventItem.qml
 --- original/usr/share/jolla-calendar/cover/CoverEventItem.qml	2015-06-08 07:29:53.000000000 +0100
-+++ patch/usr/share/jolla-calendar/cover/CoverEventItem.qml	2015-06-08 07:46:53.000000000 +0100
++++ patch/usr/share/jolla-calendar/cover/CoverEventItem.qml	2015-06-08 22:34:20.000000000 +0100
 @@ -1,7 +1,6 @@
  import QtQuick 2.0
  import Sailfish.Silica 1.0
