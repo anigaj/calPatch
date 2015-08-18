@@ -1,15 +1,26 @@
 diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/share/jolla-calendar/cover/CalendarCover.qml
 --- original/usr/share/jolla-calendar/cover/CalendarCover.qml	2015-06-08 07:29:53.000000000 +0100
-+++ patch/usr/share/jolla-calendar/cover/CalendarCover.qml	2015-06-18 16:23:30.000000000 +0100
-@@ -4,6 +4,7 @@ import org.nemomobile.time 1.0
++++ patch/usr/share/jolla-calendar/cover/CalendarCover.qml	2015-08-17 23:12:30.000000000 +0100
+@@ -2,8 +2,18 @@ import QtQuick 2.0
+ import Sailfish.Silica 1.0
+ import org.nemomobile.time 1.0
  import org.nemomobile.calendar 1.0
++import org.nemomobile.configuration 1.0
  
  CoverBackground {
 +property int indexView: 0
++    ConfigurationGroup {
++        id: calSettings
++        path: "/apps/jolla-calendar/settings"
++        property int nDaysForward: 7
++        property int daysWeeksMonths: 0
++        property int leftAction: 0
++        property int rightAction: 1
++    }
      Label {
          //% "New event"
          text: qsTrId("calendar-la-new_event")
-@@ -20,6 +21,7 @@ CoverBackground {
+@@ -20,6 +30,7 @@ CoverBackground {
      }
  
      CoverActionList {
@@ -17,29 +28,52 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
          CoverAction {
              iconSource: "image://theme/icon-cover-new"
              onTriggered: {
-@@ -29,9 +31,31 @@ CoverBackground {
+@@ -29,9 +40,54 @@ CoverBackground {
              }
          }
      }
-+CoverActionList {
-+enabled: eventList.count > 2 
++    CoverActionList {
++        enabled: eventList.count > 2 
 +        CoverAction {
-+            iconSource: "image://theme/icon-cover-new"
-+            onTriggered: {
-+                app.activate()
-+                app.showMainPage(PageStackAction.Immediate)
-+                pageStack.push("../pages/EventEditPage.qml", {}, PageStackAction.Immediate)
-+            }
-+        }
-+CoverAction {
-+            iconSource: 'image://theme/icon-cover-next'
-+            onTriggered: {
-+                indexView = (indexView+2)
-+if(indexView >= eventList.count) {
-+indexView = 0
-+}
++
++        function doLeftAction ()
++        {
++if (calSettings.leftAction ==0) {
++                    app.activate()
++                    app.showMainPage(PageStackAction.Immediate)
++                    pageStack.push("../pages/EventEditPage.qml", {}, PageStackAction.Immediate)
++                } else {
++                    indexView = indexView-2
++                    if(indexView < 0) {
++                        indexView = (eventList.count % 2 == 0) ? eventList.count - 2:eventList.count - 1
++                    }
 +                eventList.positionViewAtIndex(indexView, ListView.Beginning)
-+            }
++                }
++return 
++
++        }
++                iconSource:(calSettings.leftAction ==0) ? "image://theme/icon-cover-new" : "image://theme/icon-cover-previous"
++                onTriggered: doLeftAction() 
++        }
++        CoverAction {
++        function doRightAction ()
++        {
++if (calSettings.rightAction ==0) {
++                    app.activate()
++                    app.showMainPage(PageStackAction.Immediate)
++                    pageStack.push("../pages/EventEditPage.qml", {}, PageStackAction.Immediate)
++                } else {
++                    indexView = (indexView+2)
++                    if(indexView >= eventList.count) {
++                        indexView = 0
++                    }
++                eventList.positionViewAtIndex(indexView, ListView.Beginning)
++                }
++return
++}
++
++                iconSource:  (calSettings.rightAction ==0) ? "image://theme/icon-cover-new" : "image://theme/icon-cover-next"
++                onTriggered:  doRightAction()
 +        }
 +    }
 +
@@ -50,7 +84,7 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
          width: parent.width - 2*Theme.paddingLarge
          DateLabel {
              id: dateLabel
-@@ -82,6 +106,7 @@ CoverBackground {
+@@ -82,6 +138,7 @@ CoverBackground {
                          if (event.allDay || now < occurrence.endTime) {
                              activeAndComing.append({ displayLabel: event.displayLabel, allDay: event.allDay,
                                                         startTime: occurrence.startTime, endTime: occurrence.endTime,
@@ -58,15 +92,39 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
                                                         color: event.color })
  
                              if (!event.allDay && (nextEnding == undefined || occurrence.endTime < nextEnding)) {
-@@ -108,6 +133,7 @@ CoverBackground {
+@@ -108,6 +165,31 @@ CoverBackground {
                  id: allEvents
                  startDate: wallClock.time
                  onUpdated: eventUpdater.update()
-+                endDate: QtDate.addDays(wallClock.time, 7)  
++
++                function getEndDate() {
++                   switch(calSettings.daysWeeksMonths) {
++                       case 0:{
++                           return  QtDate.addDays(wallClock.time, calSettings.nDaysForward)
++                       }
++                       case 1:{ 
++                           return QtDate.addDays(wallClock.time, calSettings.nDaysForward *7)
++                       }
++                       case 2:{
++                           var addM =calSettings.nDaysForward
++                           var addY = 0
++                           if (addM >12) {
++                              addM = addM - 12
++                              addY = 1
++                           }
++ 
++                           var endDate = new Date(wallClock.time.getFullYear()+addY, wallClock.time.getMonth() + addM, wallClock.time.getDate())
++                           return endDate
++                       }
++                 }
++           
++            }
++
++            endDate: getEndDate() 
              }
  
              ListView {
-@@ -119,8 +145,8 @@ CoverBackground {
+@@ -119,8 +201,8 @@ CoverBackground {
                  model: activeAndComing
                  interactive: false
                  width: parent.width
@@ -77,26 +135,16 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
                  visible: count > 0
  
                  delegate: CoverEventItem {
-@@ -128,7 +154,7 @@ CoverBackground {
-                     allDay: model.allDay
-                     startTime: model.startTime
-                     endtime: model.endTime
--                    activeDay: wallClock.time
-+                    activeDay: model.evDay
-                     color: model.color
-                     Component.onCompleted: eventList.itemHeight = height
-                 }
 diff -rupN original/usr/share/jolla-calendar/cover/CoverEventItem.qml patch/usr/share/jolla-calendar/cover/CoverEventItem.qml
 --- original/usr/share/jolla-calendar/cover/CoverEventItem.qml	2015-06-08 07:29:53.000000000 +0100
-+++ patch/usr/share/jolla-calendar/cover/CoverEventItem.qml	2015-06-08 22:34:20.000000000 +0100
-@@ -1,7 +1,6 @@
++++ patch/usr/share/jolla-calendar/cover/CoverEventItem.qml	2015-08-05 13:50:56.000000000 +0100
+@@ -1,6 +1,5 @@
  import QtQuick 2.0
  import Sailfish.Silica 1.0
- import "../pages"
--
+-import "../pages"
+ 
  Row {
      property alias eventName: nameLabel.text
-     property alias allDay: timeLabel.allDay
 @@ -9,7 +8,6 @@ Row {
      property alias endtime: timeLabel.endTime
      property alias activeDay: timeLabel.activeDay
@@ -105,31 +153,58 @@ diff -rupN original/usr/share/jolla-calendar/cover/CoverEventItem.qml patch/usr/
      spacing: Theme.paddingSmall
  
      Rectangle {
-@@ -23,6 +21,39 @@ Row {
+@@ -23,7 +21,66 @@ Row {
      Column {
          id: labelColumn
          spacing: -Theme.paddingSmall
+-        EventTimeLabel {
 +
 +        Text {
 +           id: label
 +
-+           function fdw(d) {
++           function addSuffix(i,todayDate) 
++           {
++
++              if((i - todayDate) ==0 ) {
++                  return ("Today")
++              }
++              if((i - todayDate) ==1 ) {
++                  return ("Tomorrow")
++              }
++ 
++              var j = i % 10
++              var k = i % 100
++              if (j == 1 && k != 11) { return i + "st" } 
++              if (j == 2 && k != 12) { return i + "nd"} 
++              if (j == 3 && k != 13) { return i + "rd" } 
++              return i + "th" 
++           }
++
++           function fdw(sTime,eTime) {
 +              var t = new Date
-+              var t2 = new Date(d)
++              var t2 = new Date(sTime)
++              var t3 = new Date(eTime)
 +              var today = new Date(t.getFullYear(), t.getMonth(), t.getDate())
-+              var day = new Date(t2.getFullYear(), t2.getMonth(), t2.getDate())
-+              var delta = (day - today) / 86400000
++              var startDay = new Date(t2.getFullYear(), t2.getMonth(), t2.getDate())
++              var endDay = new Date(t3.getFullYear(), t3.getMonth(), t3.getDate())
++              var delta = (startDay - today) / 86400000
++              var delta2 = (endDay - startDay) / 86400000
++              var dLabel
 +              if (delta == 0) {
 +                  //% "Today"
-+                  return qsTrId("calendar-today")
++                  dLabel = qsTrId("calendar-today")
 +              }else if (delta == 1) {
 +                  //% "Tomorrow"
-+                  return qsTrId("calendar-tomorrow")
++                  dLabel = qsTrId("calendar-tomorrow")
 +              } else {
 +                  //: Long date pattern without year. Used e.g. in month view.
 +                  //% "d MMMM"
-+                  return capitalize(Qt.formatDate(d, qsTrId("calendar-date_pattern_date_month")))
++                  dLabel = capitalize(Qt.formatDate(sTime, qsTrId("calendar-date_pattern_date_month")))
 +              }
++              if(delta2 != 0) {
++              dLabel = dLabel + " - "+ addSuffix(endDay.getDate(),today.getDate())
++              } 
++              return dLabel
 +          }
 +
 +          function capitalize(string) {
@@ -137,11 +212,51 @@ diff -rupN original/usr/share/jolla-calendar/cover/CoverEventItem.qml patch/usr/
 +          }
 +
 +
-+          text: fdw(startTime)
++          text: fdw(startTime,endTime)
 +          opacity: 0.6
 +          font.pixelSize: Theme.fontSizeSmall
 +          color: Theme.primaryColor
 +        }
-         EventTimeLabel {
++        CoverTimeLabel {
              id: timeLabel
              opacity: 0.6
+             font.pixelSize: Theme.fontSizeSmall
+diff -rupN original/usr/share/jolla-calendar/cover/CoverTimeLabel.qml patch/usr/share/jolla-calendar/cover/CoverTimeLabel.qml
+--- original/usr/share/jolla-calendar/cover/CoverTimeLabel.qml	1970-01-01 01:00:00.000000000 +0100
++++ patch/usr/share/jolla-calendar/cover/CoverTimeLabel.qml	2015-08-05 07:42:56.000000000 +0100
+@@ -0,0 +1,35 @@
++import QtQuick 2.0
++import Sailfish.Silica 1.0
++
++Label {
++    property bool allDay
++    property date startTime
++    property date endTime
++    property date activeDay
++
++
++    text: {
++
++       var activeDayStart = new Date(activeDay.getFullYear(), activeDay.getMonth(), activeDay.getDate())
++        var tomorrow = new Date(activeDayStart)
++        tomorrow.setDate(tomorrow.getDate() + 1)
++
++        var _start = startTime
++        var _end = endTime
++
++        if (allDay) {
++            //% "All day"
++            return qsTrId("All day")
++        }
++
++        if (_end.getDate() != _start.getDate()) {
++        return (Format.formatDate(_start, Formatter.TimeValue) + "    "
++                + Format.formatDate(_end, Formatter.TimeValue))
++
++        }
++
++        return (Format.formatDate(_start, Formatter.TimeValue) + "-"
++                + Format.formatDate(_end, Formatter.TimeValue))
++    }
++}
++

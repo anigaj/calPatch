@@ -1,0 +1,13 @@
+{
+    "entries": [
+    {
+        "path": "applications/jolla-calendar.desktop",
+        "title": "Calendar",
+        "type": "page",
+        "icon": "image://theme/icon-m-mail",
+        "params": {
+            "source": "/usr/share/jolla-settings/pages/jolla-calendar/calendar.qml"
+        }
+    }
+    ]
+}
