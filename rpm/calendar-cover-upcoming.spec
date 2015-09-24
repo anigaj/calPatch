@@ -1,6 +1,6 @@
 Name:          calendar-cover-upcoming
 Version:       0.3
-Release:       2
+Release:       3
 Summary:       Calendar cover patch
 Group:         System/Patches
 Vendor:        Anant Gajjar
@@ -8,7 +8,7 @@ Distribution:  SailfisfOS
 Packager: Anant Gajjar
 License:       GPL
 Requires: patchmanager
-Requires: jolla-calendar <= 0.5.3
+Requires: jolla-calendar <= 0.6.3
 
 %description
 This is a patch for the calendar cover to show the upcoming events. The settings allows configuration of how far ahead to show.
