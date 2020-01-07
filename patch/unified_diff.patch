@@ -1,7 +1,6 @@
-diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/share/jolla-calendar/cover/CalendarCover.qml
---- original/usr/share/jolla-calendar/cover/CalendarCover.qml	2017-02-14 09:35:54.000000000 +0000
-+++ patch/usr/share/jolla-calendar/cover/CalendarCover.qml	2017-02-21 07:33:43.000000000 +0000
-@@ -2,8 +2,18 @@ import QtQuick 2.0
+--- original/usr/share/jolla-calendar/cover/CalendarCover.qml
++++ patch/usr/share/jolla-calendar/cover/CalendarCover.qml
+@@ -2,8 +2,18 @@
  import Sailfish.Silica 1.0
  import org.nemomobile.time 1.0
  import org.nemomobile.calendar 1.0
@@ -20,7 +19,7 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
      Label {
          //% "New event"
          text: qsTrId("calendar-la-new_event")
-@@ -20,6 +30,7 @@ CoverBackground {
+@@ -20,6 +30,7 @@
      }
  
      CoverActionList {
@@ -28,7 +27,7 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
          CoverAction {
              iconSource: "image://theme/icon-cover-new"
              onTriggered: {
-@@ -29,6 +40,49 @@ CoverBackground {
+@@ -29,6 +40,49 @@
              }
          }
      }
@@ -78,19 +77,19 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
      Column {
          x: Theme.paddingLarge
          spacing: Theme.paddingSmall
-@@ -87,6 +141,7 @@ CoverBackground {
+@@ -87,6 +141,7 @@
                          if (event.allDay || now < occurrence.endTime) {
                              activeAndComing.append({ displayLabel: event.displayLabel, allDay: event.allDay,
                                                         startTime: occurrence.startTime, endTime: occurrence.endTime,
-+evDay: occurrence.time,
++                                evDay: occurrence.time,
                                                         color: event.color })
  
                              if (!event.allDay && (nextEnding == undefined || occurrence.endTime < nextEnding)) {
-@@ -113,6 +168,29 @@ CoverBackground {
+@@ -113,6 +168,29 @@
                  id: allEvents
                  startDate: wallClock.time
                  onUpdated: eventUpdater.update()
-+                 
++                
 +                function getEndDate() {
 +                   switch(calSettings.daysWeeksMonths) {
 +                       case 0:{
@@ -116,7 +115,7 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
              }
  
              ListView {
-@@ -124,8 +202,8 @@ CoverBackground {
+@@ -124,8 +202,8 @@
                  model: activeAndComing
                  interactive: false
                  width: parent.width
@@ -127,10 +126,9 @@ diff -rupN original/usr/share/jolla-calendar/cover/CalendarCover.qml patch/usr/s
                  visible: count > 0
  
                  delegate: CoverEventItem {
-diff -rupN original/usr/share/jolla-calendar/cover/CoverEventItem.qml patch/usr/share/jolla-calendar/cover/CoverEventItem.qml
---- original/usr/share/jolla-calendar/cover/CoverEventItem.qml	2017-02-14 09:36:08.000000000 +0000
-+++ patch/usr/share/jolla-calendar/cover/CoverEventItem.qml	2017-02-27 08:58:00.000000000 +0000
-@@ -26,20 +26,81 @@ Row {
+--- original/usr/share/jolla-calendar/cover/CoverEventItem.qml
++++ patch/usr/share/jolla-calendar/cover/CoverEventItem.qml
+@@ -26,20 +26,83 @@
          id: labelColumn
          spacing: -Theme.paddingSmall
          anchors.verticalCenter: parent.verticalCenter
@@ -143,10 +141,12 @@ diff -rupN original/usr/share/jolla-calendar/cover/CoverEventItem.qml patch/usr/
 +           {
 +
 +              if((i - todayDate) ==0 ) {
-+                  return ("Today")
++                   //% "Today"
++                  return qsTrId("calendar-today")
 +              }
 +              if((i - todayDate) ==1 ) {
-+                  return ("Tomorrow")
++                  //% "Tomorrow"
++                  return qsTrId("calendar-tomorrow")
 +              }
 + 
 +              var j = i % 10
@@ -198,7 +198,7 @@ diff -rupN original/usr/share/jolla-calendar/cover/CoverEventItem.qml patch/usr/
 +        
 +        CovTimeLabel {
              id: timeLabel
-             opacity: 0.6
+             opacity: Theme.opacityHigh
              font.pixelSize: Theme.fontSizeSmall
              verticalAlignment: Text.AlignVCenter
              fontSizeMode: Text.VerticalFit

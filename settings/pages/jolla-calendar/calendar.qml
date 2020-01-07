@@ -30,8 +30,18 @@ Page {
                     text: "Show next:"
                      anchors.verticalCenter: nDaysSlider.verticalCenter 
                 } 
+TextField{
+        id: nDaysSlider
+        anchors.top: limitLabel.bottom
+      //  anchors.verticalCenter: parent.verticalCenter 
+        labelVisible: false
+        inputMethodHints:Qt.ImhFormattedNumbersOnly
+        text: calSettings.nDaysForward
+        onActiveFocusChanged: if (!activeFocus)calSettings.nDaysForward = text 
 
-                Slider {
+        EnterKey.onClicked: focus = false
+                }
+           /*     Slider {
                     id: nDaysSlider
                     width: 265
                     maximumValue: 31
@@ -42,7 +52,7 @@ Page {
 
                    onValueChanged:calSettings.nDaysForward = Math.round(value)
                    onPressAndHold: cancel()
-                }
+                }*/
  
                 ComboBox {
                    id: dwmComboBox

@@ -1,5 +1,5 @@
 Name:          calendar-cover-upcoming
-Version:       0.5
+Version:       0.6
 Release:       1
 Summary:       Calendar cover patch
 Group:         System/Patches
@@ -8,7 +8,7 @@ Distribution:  SailfisfOS
 Packager: Anant Gajjar
 License:       GPL
 Requires: patchmanager
-Requires: sailfish-version >= 2.1.0
+Requires: sailfish-version >= 3.2.0
 BuildArch: noarch
 
 %description
@@ -42,7 +42,10 @@ fi
 
 %changelog
 *  Tue Aug 17 2015 Builder <builder@...>
-0.5
+0.6-1
+Compatible with Torrunsuo
+Change days selection in settings to text field
+0.5-1
 Compatible with Iijoki
 Additional required file is installed rather than part of the patch.
 0.4
